@@ -1,4 +1,3 @@
-import FlashMessage from '@/Components/FlashMessage';
 import Pagination from '@/Components/Pagination';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps, Paginated, Supplier } from '@/types';
@@ -27,7 +26,6 @@ export default function Index({ suppliers }: PageProps<{ suppliers: Paginated<Su
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6">
-                            <FlashMessage />
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead>
                                     <tr>

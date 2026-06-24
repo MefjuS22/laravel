@@ -1,4 +1,3 @@
-import FlashMessage from '@/Components/FlashMessage';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
@@ -30,7 +29,6 @@ export default function Edit({
             <div className="py-12">
                 <div className="mx-auto max-w-3xl sm:px-6 lg:px-8">
                     <div className="bg-white p-6 shadow-sm sm:rounded-lg">
-                        <FlashMessage />
                         <form onSubmit={submit} className="space-y-4">
                             <div>
                                 <InputLabel htmlFor="product_id" value="Produkt *" />

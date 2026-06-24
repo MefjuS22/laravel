@@ -5,16 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
 use App\Models\Supplier;
+use App\Services\SupplierService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class SupplierController extends Controller
 {
+    public function __construct(
+        private readonly SupplierService $supplierService,
+    ) {}
+
     public function index(): Response
     {
         return Inertia::render('Suppliers/Index', [
-            'suppliers' => Supplier::active()->latest()->paginate(10),
+            'suppliers' => $this->supplierService->paginateActive(),
         ]);
     }
 
@@ -25,7 +30,7 @@ class SupplierController extends Controller
 
     public function store(StoreSupplierRequest $request): RedirectResponse
     {
-        Supplier::create($request->validated());
+        $this->supplierService->create($request->validated());
 
         return redirect()->route('suppliers.index')
             ->with('success', 'Dostawca został dodany.');
@@ -33,10 +38,8 @@ class SupplierController extends Controller
 
     public function show(Supplier $supplier): Response
     {
-        $supplier->load(['productSuppliers' => fn ($q) => $q->active()->with('product')]);
-
         return Inertia::render('Suppliers/Show', [
-            'supplier' => $supplier,
+            'supplier' => $this->supplierService->loadWithActiveProductSuppliers($supplier),
         ]);
     }
 
@@ -49,7 +52,7 @@ class SupplierController extends Controller
 
     public function update(UpdateSupplierRequest $request, Supplier $supplier): RedirectResponse
     {
-        $supplier->update($request->validated());
+        $this->supplierService->update($supplier, $request->validated());
 
         return redirect()->route('suppliers.index')
             ->with('success', 'Dostawca został zaktualizowany.');
@@ -57,7 +60,7 @@ class SupplierController extends Controller
 
     public function destroy(Supplier $supplier): RedirectResponse
     {
-        $supplier->deactivate();
+        $this->supplierService->deactivate($supplier);
 
         return redirect()->route('suppliers.index')
             ->with('success', 'Dostawca został dezaktywowany.');

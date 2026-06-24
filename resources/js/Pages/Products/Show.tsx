@@ -1,4 +1,3 @@
-import FlashMessage from '@/Components/FlashMessage';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps, Product } from '@/types';
 import { Head, Link } from '@inertiajs/react';
@@ -27,7 +26,6 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6">
-                            <FlashMessage />
                             <dl className="mb-6 grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <dt className="text-sm font-medium text-gray-500">Kategoria</dt>

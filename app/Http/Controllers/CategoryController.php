@@ -5,16 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class CategoryController extends Controller
 {
+    public function __construct(
+        private readonly CategoryService $categoryService,
+    ) {}
+
     public function index(): Response
     {
         return Inertia::render('Categories/Index', [
-            'categories' => Category::active()->latest()->paginate(10),
+            'categories' => $this->categoryService->paginateActive(),
         ]);
     }
 
@@ -25,7 +30,7 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        Category::create($request->validated());
+        $this->categoryService->create($request->validated());
 
         return redirect()->route('categories.index')
             ->with('success', 'Kategoria została dodana.');
@@ -33,10 +38,8 @@ class CategoryController extends Controller
 
     public function show(Category $category): Response
     {
-        $category->load(['products' => fn ($q) => $q->active()]);
-
         return Inertia::render('Categories/Show', [
-            'category' => $category,
+            'category' => $this->categoryService->loadWithActiveProducts($category),
         ]);
     }
 
@@ -49,7 +52,7 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        $category->update($request->validated());
+        $this->categoryService->update($category, $request->validated());
 
         return redirect()->route('categories.index')
             ->with('success', 'Kategoria została zaktualizowana.');
@@ -57,7 +60,7 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
-        $category->deactivate();
+        $this->categoryService->deactivate($category);
 
         return redirect()->route('categories.index')
             ->with('success', 'Kategoria została dezaktywowana.');

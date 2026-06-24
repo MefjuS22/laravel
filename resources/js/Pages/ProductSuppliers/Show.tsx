@@ -1,4 +1,3 @@
-import FlashMessage from '@/Components/FlashMessage';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps, ProductSupplier } from '@/types';
 import { Head, Link } from '@inertiajs/react';
@@ -25,7 +24,6 @@ export default function Show({ productSupplier }: PageProps<{ productSupplier: P
                 <div className="mx-auto max-w-3xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6">
-                            <FlashMessage />
                             <dl className="space-y-4">
                                 <div>
                                     <dt className="text-sm font-medium text-gray-500">Produkt</dt>

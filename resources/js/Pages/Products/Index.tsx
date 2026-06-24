@@ -1,4 +1,3 @@
-import FlashMessage from '@/Components/FlashMessage';
 import InputLabel from '@/Components/InputLabel';
 import Pagination from '@/Components/Pagination';
 import TextInput from '@/Components/TextInput';
@@ -50,7 +49,6 @@ export default function Index({
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6">
-                            <FlashMessage />
                             <form onSubmit={submitSearch} className="mb-6 flex flex-wrap items-end gap-4">
                                 <div>
                                     <InputLabel htmlFor="search" value="Szukaj" />
