@@ -44,7 +44,7 @@ const Trigger = ({ children }: PropsWithChildren) => {
                 <div
                     className="fixed inset-0 z-40"
                     onClick={() => setOpen(false)}
-                ></div>
+                />
             )}
         </>
     );
@@ -53,7 +53,7 @@ const Trigger = ({ children }: PropsWithChildren) => {
 const Content = ({
     align = 'right',
     width = '48',
-    contentClasses = 'py-1 bg-white dark:bg-gray-700',
+    contentClasses = 'overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg',
     children,
 }: PropsWithChildren<{
     align?: 'left' | 'right';
@@ -77,31 +77,22 @@ const Content = ({
     }
 
     return (
-        <>
-            <Transition
-                show={open}
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
+        <Transition
+            show={open}
+            enter="transition ease-out duration-200"
+            enterFrom="opacity-0 scale-95"
+            enterTo="opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
+        >
+            <div
+                className={`absolute z-50 mt-2 ${alignmentClasses} ${widthClasses}`}
+                onClick={() => setOpen(false)}
             >
-                <div
-                    className={`absolute z-50 mt-2 rounded-md shadow-lg ${alignmentClasses} ${widthClasses}`}
-                    onClick={() => setOpen(false)}
-                >
-                    <div
-                        className={
-                            `rounded-md ring-1 ring-black ring-opacity-5 ` +
-                            contentClasses
-                        }
-                    >
-                        {children}
-                    </div>
-                </div>
-            </Transition>
-        </>
+                <div className={contentClasses}>{children}</div>
+            </div>
+        </Transition>
     );
 };
 
@@ -114,7 +105,7 @@ const DropdownLink = ({
         <Link
             {...props}
             className={
-                'block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-800 dark:focus:bg-gray-800 ' +
+                'flex w-full items-center gap-2 px-4 py-2 text-start text-sm leading-5 text-slate-700 transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none ' +
                 className
             }
         >

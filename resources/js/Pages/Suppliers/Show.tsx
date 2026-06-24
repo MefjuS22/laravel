@@ -1,6 +1,11 @@
+import Card from '@/Components/Shop/Card';
+import EmptyState from '@/Components/Shop/EmptyState';
+import PageContainer from '@/Components/Shop/PageContainer';
+import PageHeader from '@/Components/Shop/PageHeader';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps, Supplier } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { ArrowLeft, Pencil } from 'lucide-react';
 
 export default function Show({ supplier }: PageProps<{ supplier: Supplier }>) {
     const productLinks = supplier.product_suppliers || [];
@@ -8,67 +13,79 @@ export default function Show({ supplier }: PageProps<{ supplier: Supplier }>) {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-800">{supplier.name}</h2>
-                    <div className="space-x-2">
-                        <Link href={route('suppliers.edit', supplier.id)} className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700">
-                            Edytuj
-                        </Link>
-                        <Link href={route('suppliers.index')} className="rounded-md border px-4 py-2 text-sm text-gray-700">
-                            Powrót
-                        </Link>
-                    </div>
-                </div>
+                <PageHeader
+                    title={supplier.name}
+                    actions={
+                        <>
+                            <Link href={route('suppliers.edit', supplier.id)} className="btn-primary">
+                                <Pencil className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+                                Edytuj
+                            </Link>
+                            <Link href={route('suppliers.index')} className="btn-secondary">
+                                <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+                                Powrót
+                            </Link>
+                        </>
+                    }
+                />
             }
         >
             <Head title={supplier.name} />
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <dl className="mb-6 grid gap-4 sm:grid-cols-2">
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">E-mail</dt>
-                                    <dd className="mt-1 text-gray-900">{supplier.email}</dd>
-                                </div>
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">Telefon</dt>
-                                    <dd className="mt-1 text-gray-900">{supplier.phone || '—'}</dd>
-                                </div>
-                            </dl>
-                            <h3 className="mb-3 text-lg font-medium text-gray-800">Produkty</h3>
-                            {productLinks.length > 0 ? (
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead>
-                                        <tr>
-                                            <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Produkt</th>
-                                            <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Stan magazynowy</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200">
-                                        {productLinks.map((ps) => (
-                                            <tr key={ps.id}>
-                                                <td className="px-4 py-2">
-                                                    {ps.product ? (
-                                                        <Link href={route('products.show', ps.product.id)} className="text-indigo-600 hover:underline">
-                                                            {ps.product.name}
-                                                        </Link>
-                                                    ) : (
-                                                        '—'
-                                                    )}
-                                                </td>
-                                                <td className="px-4 py-2">{ps.stock_quantity}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            ) : (
-                                <p className="text-gray-500">Brak powiązanych produktów.</p>
-                            )}
+            <PageContainer>
+                <Card>
+                    <dl className="mb-8 grid gap-4 sm:grid-cols-2">
+                        <div className="rounded-lg bg-slate-50 p-4">
+                            <dt className="shop-detail-label">E-mail</dt>
+                            <dd className="shop-detail-value">{supplier.email}</dd>
                         </div>
-                    </div>
-                </div>
-            </div>
+                        <div className="rounded-lg bg-slate-50 p-4">
+                            <dt className="shop-detail-label">Telefon</dt>
+                            <dd className="shop-detail-value">{supplier.phone || '—'}</dd>
+                        </div>
+                    </dl>
+
+                    <h3 className="mb-4 text-lg font-semibold text-slate-900">
+                        Produkty u dostawcy
+                    </h3>
+                    {productLinks.length > 0 ? (
+                        <div className="shop-table-wrap">
+                            <table className="shop-table">
+                                <thead>
+                                    <tr>
+                                        <th>Produkt</th>
+                                        <th>Stan magazynowy</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {productLinks.map((ps) => (
+                                        <tr key={ps.id}>
+                                            <td className="font-medium text-slate-900">
+                                                {ps.product ? (
+                                                    <Link
+                                                        href={route('products.show', ps.product.id)}
+                                                        className="btn-ghost"
+                                                    >
+                                                        {ps.product.name}
+                                                    </Link>
+                                                ) : (
+                                                    '—'
+                                                )}
+                                            </td>
+                                            <td>
+                                                <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-sm font-medium tabular-nums text-emerald-800">
+                                                    {ps.stock_quantity} szt.
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <EmptyState message="Brak powiązanych produktów." />
+                    )}
+                </Card>
+            </PageContainer>
         </AuthenticatedLayout>
     );
 }

@@ -1,10 +1,10 @@
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { LogIn } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 export default function Login({
@@ -84,7 +84,7 @@ export default function Login({
                                 )
                             }
                         />
-                        <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
+                        <span className="ms-2 text-sm text-slate-600">
                             Zapamiętaj mnie
                         </span>
                     </label>
@@ -94,15 +94,16 @@ export default function Login({
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                            className="rounded-md text-sm text-slate-600 underline hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         >
                             Nie pamiętasz hasła?
                         </Link>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <button type="submit" disabled={processing} className="btn-primary ms-4">
+                        <LogIn className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
                         Zaloguj się
-                    </PrimaryButton>
+                    </button>
                 </div>
             </form>
         </GuestLayout>

@@ -4,14 +4,26 @@ import FlashMessage from '@/Components/FlashMessage';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
+import {
+    ChevronDown,
+    FolderTree,
+    LayoutDashboard,
+    Link2,
+    LogOut,
+    Menu,
+    Package,
+    Truck,
+    User,
+    X,
+} from 'lucide-react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
 const navItems = [
-    { label: 'Panel', route: 'dashboard' },
-    { label: 'Kategorie', route: 'categories.index' },
-    { label: 'Produkty', route: 'products.index' },
-    { label: 'Dostawcy', route: 'suppliers.index' },
-    { label: 'Powiązania', route: 'product-supplier.index' },
+    { label: 'Panel', route: 'dashboard', icon: LayoutDashboard },
+    { label: 'Kategorie', route: 'categories.index', icon: FolderTree },
+    { label: 'Produkty', route: 'products.index', icon: Package },
+    { label: 'Dostawcy', route: 'suppliers.index', icon: Truck },
+    { label: 'Powiązania', route: 'product-supplier.index', icon: Link2 },
 ];
 
 export default function Authenticated({
@@ -26,27 +38,38 @@ export default function Authenticated({
     const isActive = (routeName: string) => route().current(routeName);
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div className="min-h-screen bg-gradient-to-b from-slate-100 to-slate-50">
+            <nav className="relative z-50 border-b border-slate-200 bg-white shadow-sm">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href={route('dashboard')}>
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                            <div className="flex shrink-0 items-center gap-3">
+                                <Link href={route('dashboard')} className="flex items-center gap-2">
+                                    <ApplicationLogo className="block h-8 w-auto fill-current text-indigo-600" />
+                                    <span className="hidden text-lg font-semibold tracking-tight text-slate-800 sm:inline">
+                                        Sklep
+                                    </span>
                                 </Link>
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                {navItems.map((item) => (
-                                    <NavLink
-                                        key={item.route}
-                                        href={route(item.route)}
-                                        active={isActive(item.route)}
-                                    >
-                                        {item.label}
-                                    </NavLink>
-                                ))}
+                            <div className="hidden sm:-my-px sm:ms-8 sm:flex sm:space-x-1">
+                                {navItems.map((item) => {
+                                    const Icon = item.icon;
+                                    return (
+                                        <NavLink
+                                            key={item.route}
+                                            href={route(item.route)}
+                                            active={isActive(item.route)}
+                                        >
+                                            <Icon
+                                                className="h-4 w-4 shrink-0"
+                                                strokeWidth={2}
+                                                aria-hidden
+                                            />
+                                            {item.label}
+                                        </NavLink>
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -57,30 +80,24 @@ export default function Authenticated({
                                         <span className="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                className="inline-flex items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-slate-800 focus:outline-none"
                                             >
+                                                <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+                                                    {user.name.charAt(0).toUpperCase()}
+                                                </span>
                                                 {user.name}
-
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
+                                                <ChevronDown
+                                                    className="-me-0.5 ms-2 h-4 w-4 text-slate-400"
+                                                    strokeWidth={2}
+                                                    aria-hidden
+                                                />
                                             </button>
                                         </span>
                                     </Dropdown.Trigger>
 
-                                    <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route('profile.edit')}
-                                        >
+                                    <Dropdown.Content contentClasses="overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
+                                        <Dropdown.Link href={route('profile.edit')}>
+                                            <User className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
                                             Profil
                                         </Dropdown.Link>
                                         <Dropdown.Link
@@ -88,6 +105,7 @@ export default function Authenticated({
                                             method="post"
                                             as="button"
                                         >
+                                            <LogOut className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
                                             Wyloguj
                                         </Dropdown.Link>
                                     </Dropdown.Content>
@@ -102,37 +120,13 @@ export default function Authenticated({
                                         (previousState) => !previousState,
                                     )
                                 }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
+                                className="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
                             >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
+                                {showingNavigationDropdown ? (
+                                    <X className="h-6 w-6" strokeWidth={2} aria-hidden />
+                                ) : (
+                                    <Menu className="h-6 w-6" strokeWidth={2} aria-hidden />
+                                )}
                             </button>
                         </div>
                     </div>
@@ -141,41 +135,53 @@ export default function Authenticated({
                 <div
                     className={
                         (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
+                        ' border-t border-slate-100 sm:hidden'
                     }
                 >
-                    <div className="space-y-1 pb-3 pt-2">
-                        {navItems.map((item) => (
-                            <ResponsiveNavLink
-                                key={item.route}
-                                href={route(item.route)}
-                                active={isActive(item.route)}
-                            >
-                                {item.label}
-                            </ResponsiveNavLink>
-                        ))}
+                    <div className="space-y-1 px-2 pb-3 pt-2">
+                        {navItems.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                                <ResponsiveNavLink
+                                    key={item.route}
+                                    href={route(item.route)}
+                                    active={isActive(item.route)}
+                                >
+                                    <span className="inline-flex items-center gap-2">
+                                        <Icon className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+                                        {item.label}
+                                    </span>
+                                </ResponsiveNavLink>
+                            );
+                        })}
                     </div>
 
-                    <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
+                    <div className="border-t border-slate-200 pb-3 pt-4">
                         <div className="px-4">
-                            <div className="text-base font-medium text-gray-800 dark:text-gray-200">
+                            <div className="text-base font-medium text-slate-800">
                                 {user.name}
                             </div>
-                            <div className="text-sm font-medium text-gray-500">
+                            <div className="text-sm text-slate-500">
                                 {user.email}
                             </div>
                         </div>
 
-                        <div className="mt-3 space-y-1">
+                        <div className="mt-3 space-y-1 px-2">
                             <ResponsiveNavLink href={route('profile.edit')}>
-                                Profil
+                                <span className="inline-flex items-center gap-2">
+                                    <User className="h-4 w-4" strokeWidth={2} aria-hidden />
+                                    Profil
+                                </span>
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
                                 href={route('logout')}
                                 as="button"
                             >
-                                Wyloguj
+                                <span className="inline-flex items-center gap-2">
+                                    <LogOut className="h-4 w-4" strokeWidth={2} aria-hidden />
+                                    Wyloguj
+                                </span>
                             </ResponsiveNavLink>
                         </div>
                     </div>
@@ -183,7 +189,7 @@ export default function Authenticated({
             </nav>
 
             {header && (
-                <header className="bg-white shadow dark:bg-gray-800">
+                <header className="border-b border-slate-200 bg-white">
                     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         {header}
                     </div>

@@ -1,7 +1,13 @@
 import Pagination from '@/Components/Pagination';
+import Card from '@/Components/Shop/Card';
+import EmptyState from '@/Components/Shop/EmptyState';
+import PageContainer from '@/Components/Shop/PageContainer';
+import PageHeader from '@/Components/Shop/PageHeader';
+import PrimaryLink from '@/Components/Shop/PrimaryLink';
+import TableActions from '@/Components/Shop/TableActions';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps, Paginated, ProductSupplier } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 
 export default function Index({ productSuppliers }: PageProps<{ productSuppliers: Paginated<ProductSupplier> }>) {
     const deactivate = (id: number) => {
@@ -13,54 +19,60 @@ export default function Index({ productSuppliers }: PageProps<{ productSuppliers
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-800">Powiązania produkt–dostawca</h2>
-                    <Link href={route('product-supplier.create')} className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700">
-                        Dodaj powiązanie
-                    </Link>
-                </div>
+                <PageHeader
+                    title="Powiązania"
+                    actions={
+                        <PrimaryLink href={route('product-supplier.create')}>
+                            Dodaj powiązanie
+                        </PrimaryLink>
+                    }
+                />
             }
         >
             <Head title="Powiązania" />
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <table className="min-w-full divide-y divide-gray-200">
+            <PageContainer>
+                <Card>
+                    {productSuppliers.data.length === 0 ? (
+                        <EmptyState message="Brak powiązań produkt–dostawca." />
+                    ) : (
+                        <div className="shop-table-wrap">
+                            <table className="shop-table">
                                 <thead>
                                     <tr>
-                                        <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Produkt</th>
-                                        <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Dostawca</th>
-                                        <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Stan magazynowy</th>
-                                        <th className="px-4 py-2 text-right text-xs font-medium uppercase text-gray-500">Akcje</th>
+                                        <th>Produkt</th>
+                                        <th>Dostawca</th>
+                                        <th>Stan magazynowy</th>
+                                        <th className="shop-table-actions">Akcje</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-200">
+                                <tbody>
                                     {productSuppliers.data.map((ps) => (
                                         <tr key={ps.id}>
-                                            <td className="px-4 py-2">{ps.product?.name || '—'}</td>
-                                            <td className="px-4 py-2">{ps.supplier?.name || '—'}</td>
-                                            <td className="px-4 py-2">{ps.stock_quantity}</td>
-                                            <td className="space-x-2 px-4 py-2 text-right">
-                                                <Link href={route('product-supplier.show', ps.id)} className="text-indigo-600 hover:underline">
-                                                    Pokaż
-                                                </Link>
-                                                <Link href={route('product-supplier.edit', ps.id)} className="text-indigo-600 hover:underline">
-                                                    Edytuj
-                                                </Link>
-                                                <button onClick={() => deactivate(ps.id)} className="text-red-600 hover:underline">
-                                                    Dezaktywuj
-                                                </button>
+                                            <td className="font-medium text-slate-900">
+                                                {ps.product?.name || '—'}
+                                            </td>
+                                            <td>{ps.supplier?.name || '—'}</td>
+                                            <td>
+                                                <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-sm font-medium tabular-nums text-emerald-800">
+                                                    {ps.stock_quantity} szt.
+                                                </span>
+                                            </td>
+                                            <td className="shop-table-actions">
+                                                <TableActions
+                                                    showHref={route('product-supplier.show', ps.id)}
+                                                    editHref={route('product-supplier.edit', ps.id)}
+                                                    onDeactivate={() => deactivate(ps.id)}
+                                                />
                                             </td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
-                            <Pagination links={productSuppliers.links} />
                         </div>
-                    </div>
-                </div>
-            </div>
+                    )}
+                    <Pagination links={productSuppliers.links} />
+                </Card>
+            </PageContainer>
         </AuthenticatedLayout>
     );
 }

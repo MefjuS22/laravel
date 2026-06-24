@@ -1,9 +1,16 @@
 import InputLabel from '@/Components/InputLabel';
 import Pagination from '@/Components/Pagination';
 import TextInput from '@/Components/TextInput';
+import Card from '@/Components/Shop/Card';
+import EmptyState from '@/Components/Shop/EmptyState';
+import PageContainer from '@/Components/Shop/PageContainer';
+import PageHeader from '@/Components/Shop/PageHeader';
+import PrimaryLink from '@/Components/Shop/PrimaryLink';
+import TableActions from '@/Components/Shop/TableActions';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Category, PageProps, Paginated, Product } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { Search } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 
 export default function Index({
@@ -36,79 +43,97 @@ export default function Index({
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-800">Produkty</h2>
-                    <Link href={route('products.create')} className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700">
-                        Dodaj produkt
-                    </Link>
-                </div>
+                <PageHeader
+                    title="Produkty"
+                    actions={
+                        <PrimaryLink href={route('products.create')}>
+                            Dodaj produkt
+                        </PrimaryLink>
+                    }
+                />
             }
         >
             <Head title="Produkty" />
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <form onSubmit={submitSearch} className="mb-6 flex flex-wrap items-end gap-4">
-                                <div>
-                                    <InputLabel htmlFor="search" value="Szukaj" />
-                                    <TextInput id="search" className="mt-1" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Nazwa lub opis..." />
-                                </div>
-                                <div>
-                                    <InputLabel htmlFor="category_id" value="Kategoria" />
-                                    <select
-                                        id="category_id"
-                                        className="mt-1 block rounded-md border-gray-300 shadow-sm"
-                                        value={categoryId}
-                                        onChange={(e) => setCategoryId(e.target.value)}
-                                    >
-                                        <option value="">Wszystkie</option>
-                                        {categories.map((cat) => (
-                                            <option key={cat.id} value={cat.id}>
-                                                {cat.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <button type="submit" className="rounded-md bg-gray-800 px-4 py-2 text-white hover:bg-gray-700">
-                                    Filtruj
-                                </button>
-                            </form>
-                            <table className="min-w-full divide-y divide-gray-200">
+            <PageContainer>
+                <Card>
+                    <form onSubmit={submitSearch} className="shop-filter-bar">
+                        <div className="flex flex-wrap items-end gap-4">
+                            <div className="min-w-[12rem] flex-1">
+                                <InputLabel htmlFor="search" value="Szukaj" />
+                                <TextInput
+                                    id="search"
+                                    className="mt-1 block w-full"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    placeholder="Nazwa lub opis..."
+                                />
+                            </div>
+                            <div>
+                                <InputLabel htmlFor="category_id" value="Kategoria" />
+                                <select
+                                    id="category_id"
+                                    className="shop-select"
+                                    value={categoryId}
+                                    onChange={(e) => setCategoryId(e.target.value)}
+                                >
+                                    <option value="">Wszystkie</option>
+                                    {categories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {cat.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <button type="submit" className="btn-primary">
+                                <Search className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+                                Filtruj
+                            </button>
+                        </div>
+                    </form>
+
+                    {products.data.length === 0 ? (
+                        <EmptyState message="Brak produktów spełniających kryteria." />
+                    ) : (
+                        <div className="shop-table-wrap">
+                            <table className="shop-table">
                                 <thead>
                                     <tr>
-                                        <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Nazwa</th>
-                                        <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Kategoria</th>
-                                        <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Cena</th>
-                                        <th className="px-4 py-2 text-right text-xs font-medium uppercase text-gray-500">Akcje</th>
+                                        <th>Nazwa</th>
+                                        <th>Kategoria</th>
+                                        <th>Cena</th>
+                                        <th className="shop-table-actions">Akcje</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-200">
+                                <tbody>
                                     {products.data.map((product) => (
                                         <tr key={product.id}>
-                                            <td className="px-4 py-2">{product.name}</td>
-                                            <td className="px-4 py-2">{product.category?.name || '—'}</td>
-                                            <td className="px-4 py-2">{Number(product.price).toFixed(2)} zł</td>
-                                            <td className="space-x-2 px-4 py-2 text-right">
-                                                <Link href={route('products.show', product.id)} className="text-indigo-600 hover:underline">
-                                                    Pokaż
-                                                </Link>
-                                                <Link href={route('products.edit', product.id)} className="text-indigo-600 hover:underline">
-                                                    Edytuj
-                                                </Link>
-                                                <button onClick={() => deactivate(product.id)} className="text-red-600 hover:underline">
-                                                    Dezaktywuj
-                                                </button>
+                                            <td className="font-medium text-slate-900">
+                                                {product.name}
+                                            </td>
+                                            <td>
+                                                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                                                    {product.category?.name || '—'}
+                                                </span>
+                                            </td>
+                                            <td className="font-medium tabular-nums text-slate-900">
+                                                {Number(product.price).toFixed(2)} zł
+                                            </td>
+                                            <td className="shop-table-actions">
+                                                <TableActions
+                                                    showHref={route('products.show', product.id)}
+                                                    editHref={route('products.edit', product.id)}
+                                                    onDeactivate={() => deactivate(product.id)}
+                                                />
                                             </td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
-                            <Pagination links={products.links} />
                         </div>
-                    </div>
-                </div>
-            </div>
+                    )}
+                    <Pagination links={products.links} />
+                </Card>
+            </PageContainer>
         </AuthenticatedLayout>
     );
 }
